@@ -270,6 +270,10 @@ angular.module('mapasculturais.services', [])
             var event = $localStorage.favoriteEvents[key];
             event.start = moment(event.start);
             event.end = moment(event.end);
+            
+            self.favorites.sort((eventA, eventb) => {
+                return eventA.startDate.isBefore(eventB.startDate);
+            });
             self.favorites.push(event);
         }
     }
