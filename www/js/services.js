@@ -271,11 +271,11 @@ angular.module('mapasculturais.services', [])
             event.start = moment(event.start);
             event.end = moment(event.end);
             
-            self.favorites.sort((eventA, eventb) => {
-                return eventA.startDate.isBefore(eventB.startDate);
-            });
             self.favorites.push(event);
         }
+        self.favorites.sort((eventA, eventb) => {
+            return eventA.startDate.isBefore(eventB.startDate);
+        });
     }
 
     if (!$localStorage.favoriteEvents) {
