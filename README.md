@@ -28,7 +28,10 @@ $ cd mapasculturais-app
 $ ionic state reset
 $ bower install
 ```
-
+* Instalar as dependências
+```
+$ npm install
+```
 * Fazer o setup SASS
 ```
 $ ionic setup sass
