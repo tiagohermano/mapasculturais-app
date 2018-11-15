@@ -273,8 +273,8 @@ angular.module('mapasculturais.services', [])
             
             self.favorites.push(event);
         }
-        self.favorites.sort((eventA, eventb) => {
-            return eventA.startDate.isBefore(eventB.startDate);
+        self.favorites.sort(function (a, b) {
+            return a.start - b.start
         });
     }
 
