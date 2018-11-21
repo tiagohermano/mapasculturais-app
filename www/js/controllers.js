@@ -25,7 +25,7 @@ function classificacao(event) {
 angular.module('mapasculturais.controllers', [])
 
     .controller('eventsCtrl', [
-        '$scope', 'mapas.service.event', 'FavoriteEvents', 'ConfigState', function ($scope, eventApi, FavoriteEvents, config) {
+        '$scope', '$window', 'mapas.service.event', 'FavoriteEvents', 'ConfigState', function ($scope, $window, eventApi, FavoriteEvents, config) {
             var api = eventApi(config.dataSource.url);
             var _limit = 25;
             var _page = 1;
@@ -78,57 +78,62 @@ angular.module('mapasculturais.controllers', [])
                 _page++;
 
                 events.then(function (rs) {
+                  // Avoids unexpected errors
+                  if (rs) {
                     var happening = [];
-                    
+
                     if (rs.length < _limit) {
-                        _endData = true;
+                      _endData = true;
                     }
 
-                    if(_page === 2 && rs.length === 0){
-                        $scope.notFound = true;
-                        return;
+                    if (_page === 2 && rs.length === 0) {
+                      $scope.notFound = true;
+                      return;
                     }
-                    
-                    rs.forEach(function(event) {
-                        event.favorite = FavoriteEvents.isFavorite(event);
+
+                    rs.forEach(function (event) {
+                      event.favorite = FavoriteEvents.isFavorite(event);
                     });
-                    
+
                     // remove os eventos antigos
                     if (!$scope.filters.showPast) {
-                        happening = rs.filter(function(r){
-                            var end = r.end.format('X');
-                            var start = r.start.format('X');
-                            
-                            if (start < _now && end > _now){
-                                return r;
-                            }
-                        });
-                        
-                        rs = rs.filter(function(r){
-                            var start = r.start.format('X');
-                            
-                            if(start > _now){
-                                return r;
-                            }
-                        });
+                      happening = rs.filter(function (r) {
+                        var end = r.end.format('X');
+                        var start = r.start.format('X');
+
+                        if (start < _now && end > _now) {
+                          return r;
+                        }
+                      });
+
+                      rs = rs.filter(function (r) {
+                        var start = r.start.format('X');
+
+                        if (start > _now) {
+                          return r;
+                        }
+                      });
                     }
 
                     var _groups = api.group('YYYY-MM-DD HH:mm', rs);
-                    
-                    if(happening.length > 0){
-                        _groups.unshift({happening: true, events: happening});
+
+                    if (happening.length > 0) {
+                      _groups.unshift({happening: true, events: happening});
                     }
                     _groups.forEach(function (grp) {
-                        if (_lastGroup && (_lastGroup.happening && grp.happening || _lastGroup.date && grp.date && _lastGroup.date.format('YYYY-MM-DD HH:mm') === grp.date.format('YYYY-MM-DD HH:mm'))) {
-                            grp.events.forEach(function (event) {
-                                _lastGroup.events.push(event);
-                            });
-                        } else {
-                            $scope.groups.push(grp);
-                        }
-                        _lastGroup = grp;
+                      if (_lastGroup && (_lastGroup.happening && grp.happening || _lastGroup.date && grp.date && _lastGroup.date.format('YYYY-MM-DD HH:mm') === grp.date.format('YYYY-MM-DD HH:mm'))) {
+                        grp.events.forEach(function (event) {
+                          _lastGroup.events.push(event);
+                        });
+                      } else {
+                        $scope.groups.push(grp);
+                      }
+                      _lastGroup = grp;
                     });
                     $scope.$broadcast('scroll.infiniteScrollComplete');
+                } else {
+                    $window.location.href = '/index.html';
+                  }
 
                 });
             };
@@ -292,7 +297,7 @@ angular.module('mapasculturais.controllers', [])
     .controller('mapCtrl', ['$scope', '$ionicPlatform', 'MapState', 'mapas.service.space', 'ConfigState', function ($scope, $ionicPlatform, MapState, spaceApi, config) {
         var api = spaceApi(config.dataSource.url);
         var map;
-        var from = moment().toDate()
+        var from = moment().toDate();
         var to = moment().add(1, 'months').toDate();
 
         api.util.applyMe.apply($scope);
@@ -310,14 +315,13 @@ angular.module('mapasculturais.controllers', [])
             // Invoking Map using Google Map SDK v2 by dubcanada
             MapState.initialize(div)
 
-
             // Capturing event when Map load are ready.
             MapState.setReadyCallback(function() {
                 _spaces.then(function(spaces){
                     spaces.forEach(function(space){
                         var pin = {
                             title: space.name,
-                            snippet: 
+                            snippet:
                                 "endereço: " + space.endereco + "\n" +
                                 "tipo: " + space.type.name + "\n" +
                                 "área de atuação: " + space.terms.area.join(', '),
@@ -325,7 +329,7 @@ angular.module('mapasculturais.controllers', [])
                             position: new plugin.google.maps.LatLng(
                                 space.location.latitude,
                                 space.location.longitude),
-                                
+
                             styles: {
                                 maxWidth: "90%"
                             }
