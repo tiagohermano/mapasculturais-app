@@ -23,7 +23,17 @@ angular.module('mapasculturais.services', [])
     this.dataSourceConfigurable = this.fixedPrefix == null;
 
     this.dataSources = {
-        'spcultura': {
+        mapasgovbr: {
+          prefix: 'mapasgovbr',
+          name: 'Mapa da Cultura',
+          url: 'http://mapas.cultura.gov.br/',
+          map: {
+            latitude: -15.792253570362446,
+            longitude: -47.900390625,
+            zoom: 5
+          }
+        },
+        spcultura: {
             prefix: 'spcultura',
             name: 'SP Cultura',
             url: 'http://spcultura.prefeitura.sp.gov.br/',
@@ -81,16 +91,6 @@ angular.module('mapasculturais.services', [])
                 latitude: -13.549881446917126,
                 longitude: -56.085205078125,
                 zoom: 6
-            }
-        },
-        mapasgovbr: {
-            prefix: 'mapasgovbr',
-            name: 'Mapa da Cultura',
-            url: 'http://mapas.cultura.gov.br/',
-            map: {
-                latitude: -15.792253570362446,
-                longitude: -47.900390625,
-                zoom: 5
             }
         },
         lugaresdacultura: {
@@ -338,8 +338,12 @@ angular.module('mapasculturais.services', [])
         };
     }
     this.initialize = function(div) {
+      if (plugin) {
         self.map = plugin.google.maps.Map.getMap(div, self.getOptions());
         self.map.setClickable(true);
+      } else {
+        console.log('Serviço do Mapa não ativo no momento');
+      }
     }
 
     this.setReadyCallback = function(callback) {
