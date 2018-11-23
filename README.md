@@ -38,6 +38,13 @@ $ npm install
 $ ionic setup sass
 ```
 
+**OBS**: Se a sua versão do ionic não utilizar mais a sintaxe `ionic setup`, siga os seguintes passos:
+
+```
+$ npm install
+$ gulp
+```
+
 * Rodar
 ```
 $ ionic serve
