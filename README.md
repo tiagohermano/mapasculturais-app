@@ -98,4 +98,8 @@ $ android
 ```
 $ ionic emulate android
 ```
-
+* Instalar o Cordova e plugin Nativo Ionic
+```
+$ ionic cordova plugin add cordova-plugin-google-analytics
+$ npm install --save @ionic-native/google-analytics
+```
